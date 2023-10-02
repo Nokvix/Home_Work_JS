@@ -1,2 +1,2 @@
-# Home_Work_JS
-JS
+# Домашниие задания по курсу по JavaScript
+
