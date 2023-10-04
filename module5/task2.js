@@ -9,6 +9,6 @@ function filter(whiteList, blackList) {
 }
 
 let whiteList = ['my-email@gmail.ru', 'jsfunc@mail.ru', 'annavkmail@vk.ru', 'fullname@skill.ru', 'goodday@day.ru'];
-let blackList = ['my-email@gmail.ru', 'jsfunc@mail.ru','goodday@day.ru'];
+let blackList = ['jsfunc@mail.ru','goodday@day.ru'];
 let result = filter(whiteList, blackList);
 console.log(result)
