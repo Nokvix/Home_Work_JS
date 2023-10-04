@@ -6,4 +6,4 @@ for (let i = 0; i < count; i++) {
     let number = Math.round(Math.random() * Math.abs(m - n) + Math.min(n, m));
     array.push(number);
 }
-console.log(array)
+console.log(array);
