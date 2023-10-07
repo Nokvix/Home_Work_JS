@@ -1,11 +1,5 @@
 function filter(whiteList, blackList) {
-    let result = [];
-    for (let email of whiteList) {
-        if (!blackList.includes(email)) {
-            result.push(email);
-        }
-    }
-    return result;
+    return whiteList.filter(element => !blackList.includes(element))
 }
 
 let whiteList = ['my-email@gmail.ru', 'jsfunc@mail.ru', 'annavkmail@vk.ru', 'fullname@skill.ru', 'goodday@day.ru'];
