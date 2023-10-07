@@ -12,18 +12,10 @@ let user2 = {
 };
 
 let result = getOlderUser(user1, user2);
-console.log(`Старший(-ая) - '${result}'`);
+console.log(`1 задание: Старший(-ая) - '${result}'`);
 
 function getOlderUserArray(allUsers) {
-    let greatestAge = -1;
-    let oldestUser = {};
-    for (let user of allUsers) {
-        if (user.age > greatestAge) {
-            greatestAge = user.age;
-            oldestUser = user;
-        }
-    }
-    return oldestUser.name;
+    return allUsers.sort((user1, user2) => -(user1.age - user2.age));
 }
 
 let allUsers = [
@@ -35,4 +27,4 @@ let allUsers = [
 ];
 
 result = getOlderUserArray(allUsers);
-console.log(`Старший(-ая) - '${result}'`);
+console.log(`2 задание: Старший(-ая) - '${result[0].name}'`);
