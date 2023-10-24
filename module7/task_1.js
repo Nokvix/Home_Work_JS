@@ -11,4 +11,4 @@ function createStudentCard(name, age) {
     div.append(span)
 }
 
-createStudentCard('Игорь', 19);
+createStudentCard('Игорь', 17);
