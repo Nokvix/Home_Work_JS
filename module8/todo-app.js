@@ -1,4 +1,7 @@
 (function() {
+    // массив для хранения дел в виде объектов
+    let todos = [];
+
     // Создаём и возвращаем заголовок приложения
     function createAppTitle(title) {
         let appTitle = document.createElement('h2');
@@ -62,6 +65,13 @@
         buttonGroup.append(doneButton);
         buttonGroup.append(deleteButton);
         item.append(buttonGroup);
+
+        // добавляю дело в массив дел
+        todos.push({
+            id: todos.length + 1, // Генерируем уникальный id, увеличивая на 1 больше предыдущего максимального
+            name: object.name,
+            done: false
+        });
 
         // приложению нужен доступ к самому элементу и кнопкам, чтобы обрабатывать события нажатия
         return {
