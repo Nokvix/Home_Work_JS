@@ -40,7 +40,7 @@
         return list;
     }
 
-    function createTodoItem(name) {
+    function createTodoItem(object) {
         let item = document.createElement('li');
         // Кнопки помещаем в элемент, который красиво покажет их в одной группе
         let buttonGroup = document.createElement('div');
@@ -51,7 +51,7 @@
         // в его правой части с помощью flex
         item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
         // list-group-item: красиво показать элемент внутри списка; остальные три класса для выравнивания
-        item.textContent = name; // не innerHTML, тк в name могут быть спец символы (<, >, ...)
+        item.textContent = object.name; // не innerHTML, тк в name могут быть спец символы (<, >, ...)
         buttonGroup.classList.add('btn-group', 'btn-group-sm'); // btn-group: применяет стили; btn-group-sm: уменьшает высоту объекта
         doneButton.classList.add('btn', 'btn-success'); // btn-success: делает кнопку зелёной
         doneButton.textContent = 'Готово';
@@ -79,6 +79,18 @@
         container.append(todoAppTitle);
         container.append(todoItemForm.form);
         container.append(todoList);
+        
+        if (!todoItemForm.input.value) {
+            todoItemForm.button.disabled = true;
+        }
+
+        todoItemForm.input.addEventListener('input', function() {
+            if (!todoItemForm.input.value) {
+                todoItemForm.button.disabled = true;
+            } else {
+                todoItemForm.button.disabled = false;
+            }
+        });
 
         // браузер создаёт событие submit на форме по нажатию Enter или на кнопку создания дела
         todoItemForm.form.addEventListener('submit', function(e) {
@@ -91,7 +103,12 @@
                 return;
             }
 
-            let todoItem = createTodoItem(todoItemForm.input.value);
+            todoItemForm.button.disabled = true;
+
+            let todoItem = createTodoItem({
+                name: todoItemForm.input.value, 
+                done: false,
+            });
 
             // добавляем обработчики событий
             todoItem.doneButton.addEventListener('click', function() {
