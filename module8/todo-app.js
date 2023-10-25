@@ -73,11 +73,14 @@
             done: false
         });
 
+        let id = todos.length;
+
         // приложению нужен доступ к самому элементу и кнопкам, чтобы обрабатывать события нажатия
         return {
             item,
             doneButton,
             deleteButton,
+            id,
         };
     };
 
@@ -122,10 +125,13 @@
 
             // добавляем обработчики событий
             todoItem.doneButton.addEventListener('click', function() {
+                let foundObject = todos.find((elem) => elem.id === todoItem.id);
+                foundObject.done = !foundObject.done;
                 todoItem.item.classList.toggle('list-group-item-success'); // list-group-item-success: bootstrap красит элемент в зелёный
             });
             todoItem.deleteButton.addEventListener('click', function() {
                 if (confirm('Вы уверены?')) {
+                    todos = todos.filter((elem) => elem.id !== todoItem.id);
                     todoItem.item.remove();
                 }
             });
