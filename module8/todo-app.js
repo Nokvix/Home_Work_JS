@@ -2,6 +2,52 @@
     // массив для хранения дел в виде объектов
     let todos = [];
 
+    function dataToJson(data) {
+        return JSON.stringify(data);
+    }
+
+    function jsonToData(data) {
+        return JSON.parse(data);
+    }
+
+    function getCartData(key) {
+        return localStorage.getItem(key);
+    }
+
+    function setCartData(key, data) {
+        return localStorage.setItem(key, data);
+    }
+
+    function addToLocalStorage(key, data) {
+        let cart = getCartData(key);
+        cart = cart ? jsonToData(cart) : [];
+        cart.push(data);
+        setCartData(key, dataToJson(cart));
+    }
+
+    function removeFromLocalStorage(key, id) {
+        let cart = jsonToData(getCartData(key));
+        let newCart = [];
+        
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id !== id) {
+                newCart.push(cart[i]);
+            }
+        }
+
+        setCartData(key, dataToJson(newCart));
+    }
+
+    function caseEdit(key, data) {
+        let cart = jsonToData(getCartData(key));
+
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id === data.id) {
+                cart[i].done = !cart[i].done;
+            }
+        }
+    }
+
     // Создаём и возвращаем заголовок приложения
     function createAppTitle(title) {
         let appTitle = document.createElement('h2');
@@ -43,7 +89,7 @@
         return list;
     }
 
-    function createTodoItem(object) {
+    function createTodoItem(object, listName) {
         let item = document.createElement('li');
         // Кнопки помещаем в элемент, который красиво покажет их в одной группе
         let buttonGroup = document.createElement('div');
@@ -66,12 +112,16 @@
         buttonGroup.append(deleteButton);
         item.append(buttonGroup);
 
-        // добавляю дело в массив дел
-        todos.push({
+        let caseData = {
             id: todos.length + 1, // Генерируем уникальный id, увеличивая на 1 больше предыдущего максимального
             name: object.name,
             done: false
-        });
+        }
+
+        // добавляю дело в массив дел
+        todos.push(caseData);
+
+        addToLocalStorage(listName, caseData);
 
         let id = todos.length;
 
@@ -84,7 +134,7 @@
         };
     };
 
-    function createTodoApp(container, title = 'Список дел') {
+    function createTodoApp(container, title = 'Список дел', listName) {
         let todoAppTitle = createAppTitle(title);
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList();
@@ -121,18 +171,22 @@
             let todoItem = createTodoItem({
                 name: todoItemForm.input.value, 
                 done: false,
-            });
+            }, 
+            listName);
 
             // добавляем обработчики событий
             todoItem.doneButton.addEventListener('click', function() {
                 let foundObject = todos.find((elem) => elem.id === todoItem.id);
                 foundObject.done = !foundObject.done;
+                caseEdit(listName, foundObject);
                 todoItem.item.classList.toggle('list-group-item-success'); // list-group-item-success: bootstrap красит элемент в зелёный
             });
             todoItem.deleteButton.addEventListener('click', function() {
                 if (confirm('Вы уверены?')) {
+                    let todoElem = todos.find((elem) => elem.id === todoItem.id);
                     todos = todos.filter((elem) => elem.id !== todoItem.id);
                     todoItem.item.remove();
+                    removeFromLocalStorage(listName, todoElem.id)
                 }
             });
 
@@ -145,9 +199,9 @@
     }
     
     document.addEventListener('DOMContentLoaded', function() {
-        createTodoApp(document.getElementById('my-todos'), 'Мои дела');
-        createTodoApp(document.getElementById('mom-todos'), 'Дела для мамы');
-        createTodoApp(document.getElementById('dad-todos'), 'Дела для папы');     
+        createTodoApp(document.getElementById('my-todos'), 'Мои дела', 'my');
+        createTodoApp(document.getElementById('mom-todos'), 'Дела для мамы', 'mom');
+        createTodoApp(document.getElementById('dad-todos'), 'Дела для папы', 'dad');     
     });
 
     window.createTodoApp = createTodoApp;
