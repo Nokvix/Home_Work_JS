@@ -30,13 +30,8 @@
 
     function removeFromLocalStorage(key, id) {
         let cart = jsonToData(getCartData(key));
-        let newCart = [];
         
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].id !== id) {
-                newCart.push(cart[i]);
-            }
-        }
+        let newCart = cart.filter((elem) => elem.id !== id);
 
         setCartData(key, dataToJson(newCart));
     }
@@ -57,7 +52,24 @@
             todos = [];
             todos = jsonToData(data);
         }
-    }    
+    }
+
+    function eventHandling(todoItem, listName, todo) {
+        todoItem.doneButton.addEventListener('click', function() {
+            caseEdit(listName, todo);
+            todoItem.item.classList.toggle('list-group-item-success');
+        });
+
+        todoItem.deleteButton.addEventListener('click', function() {
+            if (confirm('Вы уверены?')) {
+                todos = todos.filter((elem) => elem.id !== todo.id);
+                todoItem.item.remove();
+                removeFromLocalStorage(listName, todo.id);
+            }
+        });
+        
+        return todoItem;
+    }
 
     // Создаём и возвращаем заголовок приложения
     function createAppTitle(title) {
@@ -201,18 +213,20 @@
     todos.forEach(function(todo) {
         let todoItem = createTodoItem(todo, listName, true);
 
-        todoItem.doneButton.addEventListener('click', function() {
-            caseEdit(listName, todo);
-            todoItem.item.classList.toggle('list-group-item-success');
-        });
+        // todoItem.doneButton.addEventListener('click', function() {
+        //     caseEdit(listName, todo);
+        //     todoItem.item.classList.toggle('list-group-item-success');
+        // });
 
-        todoItem.deleteButton.addEventListener('click', function() {
-            if (confirm('Вы уверены?')) {
-                todos = todos.filter((elem) => elem.id !== todo.id);
-                todoItem.item.remove();
-                removeFromLocalStorage(listName, todo.id);
-            }
-        });
+        // todoItem.deleteButton.addEventListener('click', function() {
+        //     if (confirm('Вы уверены?')) {
+        //         todos = todos.filter((elem) => elem.id !== todo.id);
+        //         todoItem.item.remove();
+        //         removeFromLocalStorage(listName, todo.id);
+        //     }
+        // });
+        
+        todoItem = eventHandling(todoItem, listName, todo);
 
         todoList.append(todoItem.item);
     });
@@ -237,19 +251,22 @@
             listName);
 
             // добавляем обработчики событий
-            todoItem.doneButton.addEventListener('click', function() {
-                let foundObject = todos.find((elem) => elem.id === todoItem.id);
-                caseEdit(listName, foundObject);
-                todoItem.item.classList.toggle('list-group-item-success'); // list-group-item-success: bootstrap красит элемент в зелёный
-            });
-            todoItem.deleteButton.addEventListener('click', function() {
-                if (confirm('Вы уверены?')) {
-                    let todoElem = todos.find((elem) => elem.id === todoItem.id);
-                    todos = todos.filter((elem) => elem.id !== todoItem.id);
-                    todoItem.item.remove();
-                    removeFromLocalStorage(listName, todoElem.id)
-                }
-            });
+            // todoItem.doneButton.addEventListener('click', function() {
+            //     let foundObject = todos.find((elem) => elem.id === todoItem.id);
+            //     caseEdit(listName, foundObject);
+            //     todoItem.item.classList.toggle('list-group-item-success'); // list-group-item-success: bootstrap красит элемент в зелёный
+            // });
+            // todoItem.deleteButton.addEventListener('click', function() {
+            //     if (confirm('Вы уверены?')) {
+            //         let todoElem = todos.find((elem) => elem.id === todoItem.id);
+            //         todos = todos.filter((elem) => elem.id !== todoItem.id);
+            //         todoItem.item.remove();
+            //         removeFromLocalStorage(listName, todoElem.id)
+            //     }
+            // });
+
+            let foundObject = todos.find((elem) => elem.id === todoItem.id);
+            todoItem = eventHandling(todoItem, listName, foundObject);
 
             // создаём и добавляем в список новое дело с названием из поля для ввода
             todoList.append(todoItem.item);
