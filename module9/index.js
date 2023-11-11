@@ -1,3 +1,5 @@
+let flag = true;
+
 function arrayGeneration() {
     const array = [];
     for (let i = 1; i < 9; i++) {
@@ -27,13 +29,53 @@ function createCard(number) {
 function createButton() {
     const button = document.createElement("button");
     const containerButton = document.querySelector(".button");
-    button.innerHTML = "Играть снова"
+    button.innerHTML = "Играть снова";
     containerButton.append(button)
 
     button.addEventListener("click", () => {
         location.reload();
     });
 }
+
+function updateTimer(display) {
+    if (--timer < 0) {
+        clearInterval(intervalId);
+        display.textContent = "Время вышло!\nВы проиграли :(";
+        flag = false;
+        waitForEndTurn = true;
+        createButton();
+    } else {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+    }
+}
+
+function startTimer(duration, display) {
+    timer = duration;
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    display.textContent = minutes + ":" + seconds;
+
+    const intervalId = setInterval(function () {
+        updateTimer(display);
+    }, 1000);
+
+    return intervalId;
+}
+
+const timerDisplay = document.querySelector(".timer");
+const initialTime = 60;
+
+const intervalId = startTimer(initialTime, timerDisplay);
 
 const shuffledArray = arrayShuffle();
 const container = document.querySelector(".cards");
@@ -69,6 +111,9 @@ for (const num of shuffledArray) {
             openCardsCount += 2;
 
             if (openCardsCount === cardsCount) {
+                timerDisplay.textContent = "Ура!\nВы победили :)"
+                waitForEndTurn = true;
+                clearInterval(intervalId);
                 createButton();
             }
             return;
@@ -81,7 +126,7 @@ for (const num of shuffledArray) {
 
             waitForEndTurn = false;
             activeCard = null;
-        }, 500);
+        }, 300);
     });
     container.appendChild(cardElem);
 }

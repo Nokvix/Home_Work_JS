@@ -36,3 +36,13 @@ button {
 	color: #AAAAAA;
 	cursor: pointer;
 }
+
+.timer {
+	color: #AAAAAA;
+	font-size: 45px;
+	white-space: pre-line;
+	position: absolute;
+	top: 0;
+	right: 20px;
+	margin: 48px;
+  }
