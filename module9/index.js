@@ -51,7 +51,7 @@ for (const num of shuffledArray) {
             return;
         }
 
-        cardElem.innerHTML = String(num);
+        cardElem.textContent = num;
 
         if (!activeCard) {
             activeCard = cardElem;
@@ -60,7 +60,7 @@ for (const num of shuffledArray) {
 
         const numberToMatch = activeCard.getAttribute("data-num");
 
-        if (numberToMatch === String(num)) {
+        if (numberToMatch == num) {
             cardElem.setAttribute("data-open", "true");
             activeCard.setAttribute("data-open", "true");
 
@@ -81,7 +81,7 @@ for (const num of shuffledArray) {
 
             waitForEndTurn = false;
             activeCard = null;
-        }, 1000);
+        }, 500);
     });
     container.appendChild(cardElem);
 }
