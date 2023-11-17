@@ -16,3 +16,7 @@ th, td {
 .faculty {
     width: 35%;
 }
+
+.data-sort {
+    cursor: pointer;
+}
