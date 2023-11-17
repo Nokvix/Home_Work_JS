@@ -1,0 +1,18 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 2px solid #555555;
+}
+
+th, td {
+    border: 2px solid #555555;
+    padding: 8px;
+}
+
+.fullname {
+    width: 25%;
+}
+
+.faculty {
+    width: 35%;
+}
