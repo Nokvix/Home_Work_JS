@@ -1,4 +1,4 @@
-let studentsArray = [];
+const studentsArray = [];
 const date = new Date();
 const maxDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 
@@ -23,14 +23,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     handleSortClick('yearsStudy');
                     break;
             }
-            
+
         });
     });
 
-    function handleSortClick(columnIndex) {
+    function applyFilters() {
+        const filteredStudents = studentsArray.filter(student => {
+            const fullnameFilter = studentFilterForm.fullnameSearch.value.toLowerCase();
+            const facultyFilter = studentFilterForm.facultySearch.value.toLowerCase();
+            const yearBeginningStudyFilter = studentFilterForm.yearBeginningStudy.value;
+            const yearGraduationFilter = studentFilterForm.yearGraduation.value;
+
+            return (
+                student.fullname.toLowerCase().includes(fullnameFilter) &&
+                student.faculty.toLowerCase().includes(facultyFilter) &&
+                (!yearBeginningStudyFilter || student.yearsStudy.getFullYear() == yearBeginningStudyFilter) &&
+                (!yearGraduationFilter || (student.yearsStudy.getFullYear() + 4) == yearGraduationFilter)
+            );
+        });
+
+        handleSortClick('fullname', filteredStudents);
+    }
+
+    function handleSortClick(columnIndex, students = studentsArray) {
         tableBody.innerHTML = '';
 
-        studentsArray.sort(function (a, b) {
+        students.sort(function (a, b) {
             const valueA = a[columnIndex];
             const valueB = b[columnIndex];
 
@@ -39,19 +57,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return 0;
         });
 
-        studentsArray.forEach(function (student) {
-            let row = document.createElement('tr');
+        students.forEach(function (student) {
+            const row = document.createElement('tr');
 
-            let name = document.createElement('td');
+            const name = document.createElement('td');
             name.textContent = Array(student.surname, student.name, student.middleName).join(' ');
 
-            let faculty = document.createElement('td');
+            const faculty = document.createElement('td');
             faculty.textContent = student.faculty;
 
-            let dataBirth = document.createElement('td');
+            const dataBirth = document.createElement('td');
             dataBirth.textContent = formatDateString(student.dateOfBirth);
 
-            let yearsStudy = document.createElement('td');
+            const yearsStudy = document.createElement('td');
             yearsStudy.textContent = printYearsSchooling(student.yearsStudy);
 
             row.appendChild(name);
@@ -147,18 +165,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         studentsArray.push(student);
 
-        let row = document.createElement('tr');
+        const row = document.createElement('tr');
 
-        let name = document.createElement('td');
+        const name = document.createElement('td');
         name.textContent = Array(student.surname, student.name, student.middleName).join(' ');
 
-        let faculty = document.createElement('td');
+        const faculty = document.createElement('td');
         faculty.textContent = student.faculty;
 
-        let dataBirth = document.createElement('td');
+        const dataBirth = document.createElement('td');
         dataBirth.textContent = formatDateString(studentForm.dataBirtInput.value);
 
-        let yearsStudy = document.createElement('td');
+        const yearsStudy = document.createElement('td');
         yearsStudy.textContent = printYearsSchooling(studentForm.yearsStudyInput.value);
 
         row.appendChild(name);
@@ -170,13 +188,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createStudentForm() {
-        let form = document.createElement('form');
-        let nameInput = document.createElement('input');
-        let facultyInput = document.createElement('input');
-        let dataBirtInput = document.createElement('input');
-        let yearsStudyInput = document.createElement('input');
-        let button = document.createElement('button');
-        let buttonWrapper = document.createElement('div');
+        const form = document.createElement('form');
+        const nameInput = document.createElement('input');
+        const facultyInput = document.createElement('input');
+        const dataBirtInput = document.createElement('input');
+        const yearsStudyInput = document.createElement('input');
+        const button = document.createElement('button');
+        const buttonWrapper = document.createElement('div');
 
         form.classList.add('input-group', 'mb-3');
 
@@ -219,10 +237,72 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-    let studentForm = createStudentForm();
-    let inputForm = document.getElementById('input-form');
+    function createFilterForm() {
+        const form = document.createElement('form');
+        const fullnameSearch = document.createElement('input');
+        const facultySearch = document.createElement('input');
+        const yearBeginningStudy = document.createElement('input');
+        const yearGraduation = document.createElement('input');
+        const clearButton = document.createElement('button');
 
+        form.classList.add('input-group', 'mb-3');
+
+        fullnameSearch.classList.add('form-control');
+        fullnameSearch.placeholder = 'Введите часть имени для поиска';
+
+        facultySearch.classList.add('form-control');
+        facultySearch.placeholder = 'Введите часть названия факультета для поиска';
+
+        yearBeginningStudy.classList.add('form-control');
+        yearBeginningStudy.placeholder = 'Введите год начала обучения для поиска';
+
+        yearGraduation.classList.add('form-control');
+        yearGraduation.placeholder = 'Введите год окончания обучения для поиска';
+
+        clearButton.classList.add('btn', 'btn-primary');
+        clearButton.textContent = 'Очистить фильтры';
+
+        form.append(fullnameSearch);
+        form.append(facultySearch);
+        form.append(yearBeginningStudy);
+        form.append(yearGraduation);
+        form.append(clearButton);
+
+        return {
+            form,
+            fullnameSearch,
+            facultySearch,
+            yearBeginningStudy,
+            yearGraduation,
+            clearButton,
+        };
+    }
+
+    applyFilters();
+
+    const studentFilterForm = createFilterForm();
+    const filterForm = document.getElementById('filter-form');
+    const studentForm = createStudentForm();
+    const inputForm = document.getElementById('input-form');
+
+    filterForm.append(studentFilterForm.form);
     inputForm.append(studentForm.form);
+
+    studentFilterForm.fullnameSearch.addEventListener('input', applyFilters);
+    studentFilterForm.facultySearch.addEventListener('input', applyFilters);
+    studentFilterForm.yearBeginningStudy.addEventListener('input', applyFilters);
+    studentFilterForm.yearGraduation.addEventListener('input', applyFilters);
+    
+    studentFilterForm.clearButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        studentFilterForm.fullnameSearch.value = '';
+        studentFilterForm.facultySearch.value = '';
+        studentFilterForm.yearBeginningStudy.value = '';
+        studentFilterForm.yearGraduation.value = '';
+
+        applyFilters();
+    })
 
     studentForm.nameInput.addEventListener('input', handleInputChange);
     studentForm.facultyInput.addEventListener('input', handleInputChange);
