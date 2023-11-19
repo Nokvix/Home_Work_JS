@@ -2,28 +2,20 @@ const studentsArray = [];
 const date = new Date();
 const maxDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const tableHeaders = document.querySelectorAll('.data-sort');
     const tableBody = document.getElementById('table-body');
     let sortOrder = 1;
+    const dictionary = {
+        0: 'fullname',
+        1: 'faculty',
+        2:'dateOfBirth',
+        3: 'yearsStudy',
+    }
 
-    tableHeaders.forEach(function (header, index) {
+    tableHeaders.forEach((header, index) => {
         header.addEventListener('click', function () {
-            switch (index) {
-                case 0:
-                    handleSortClick('fullname');
-                    break;
-                case 1:
-                    handleSortClick('faculty');
-                    break;
-                case 2:
-                    handleSortClick('dateOfBirth');
-                    break;
-                case 3:
-                    handleSortClick('yearsStudy');
-                    break;
-            }
-
+            handleSortClick(dictionary[index]);
         });
     });
 
@@ -48,20 +40,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleSortClick(columnIndex, students = studentsArray) {
         tableBody.innerHTML = '';
 
-        students.sort(function (a, b) {
+        students.sort((a, b) => {
             const valueA = a[columnIndex];
             const valueB = b[columnIndex];
 
-            if (valueA < valueB) return -sortOrder;
-            if (valueA > valueB) return sortOrder;
-            return 0;
+            return valueA < valueB ? -sortOrder : valueA > valueB ? sortOrder : 0;
         });
 
-        students.forEach(function (student) {
+        students.forEach((student) => {
             const row = document.createElement('tr');
 
             const name = document.createElement('td');
-            name.textContent = Array(student.surname, student.name, student.middleName).join(' ');
+            name.textContent = student.fullname;
 
             const faculty = document.createElement('td');
             faculty.textContent = student.faculty;
@@ -87,13 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
         date.placeholder = placeholderText;
         date.min = minDate;
         date.max = maxDate;
-    }
-
-    function zeroOutInputFields(studentForm) {
-        studentForm.nameInput.value = '';
-        studentForm.facultyInput.value = '';
-        studentForm.dataBirtInput.value = '';
-        studentForm.yearsStudyInput.value = '';
     }
 
     function formatDateString(dateString) {
@@ -168,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const row = document.createElement('tr');
 
         const name = document.createElement('td');
-        name.textContent = Array(student.surname, student.name, student.middleName).join(' ');
+        name.textContent = student.fullname;
 
         const faculty = document.createElement('td');
         faculty.textContent = student.faculty;
@@ -288,30 +271,25 @@ document.addEventListener('DOMContentLoaded', function () {
     filterForm.append(studentFilterForm.form);
     inputForm.append(studentForm.form);
 
-    studentFilterForm.fullnameSearch.addEventListener('input', applyFilters);
-    studentFilterForm.facultySearch.addEventListener('input', applyFilters);
-    studentFilterForm.yearBeginningStudy.addEventListener('input', applyFilters);
-    studentFilterForm.yearGraduation.addEventListener('input', applyFilters);
+    const {clearButton, ...otherFilter} = studentFilterForm;
+
+    Object.values(otherFilter).forEach(input => input.addEventListener('input', applyFilters));
     
-    studentFilterForm.clearButton.addEventListener('click', function (e) {
+    studentFilterForm.clearButton.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        studentFilterForm.fullnameSearch.value = '';
-        studentFilterForm.facultySearch.value = '';
-        studentFilterForm.yearBeginningStudy.value = '';
-        studentFilterForm.yearGraduation.value = '';
+
+        Object.values(otherFilter).forEach(input => input.value = '');
 
         applyFilters();
     })
 
-    studentForm.nameInput.addEventListener('input', handleInputChange);
-    studentForm.facultyInput.addEventListener('input', handleInputChange);
-    studentForm.dataBirtInput.addEventListener('input', handleInputChange);
-    studentForm.yearsStudyInput.addEventListener('input', handleInputChange);
+    const {button, ...other} = studentForm;
+
+    Object.values(other).forEach(input => input.addEventListener('input', handleInputChange));
 
     handleInputChange();
 
-    studentForm.form.addEventListener('submit', function (e) {
+    studentForm.form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         studentForm.button.disabled = true;
@@ -325,6 +303,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         tableBody.append(row);
-        zeroOutInputFields(studentForm);
+        Object.values(other).forEach(input => input.value = '');
     })
 });
