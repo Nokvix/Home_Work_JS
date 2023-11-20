@@ -43,6 +43,10 @@ body {
     cursor: pointer;
 }
 
+.field.active {
+    background: rgba(0, 255, 0, 0.5); /* подсветка выигрышной комбинации */
+}
+
 .new-game {
     border: None;
     color: #fff;
