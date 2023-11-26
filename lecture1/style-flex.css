@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; */
+    background: linear-gradient(rgba(0, 0, 0, 0.4), transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.4), transparent 1px);
+    background-size: 30px 30px;
+}
+
+.container {
+    display: flex;
+    /* распологает в строчку элементы */
+    justify-content: center;
+    /* center - располагает блок элементов по центру;  flex-start - располагает блок элементов у левого края экрана; 
+    flex-end - располагает элементы у правого края экрана; space-between - делает между объектам делает между элементами 
+    одинаковый отступ; есть свойства: space-around, space-evenly - делают отступы от краёв, зависимо от промежутка между объектами */
+    align-items: center;
+    /* элементы выравнялись по оси Y по середине; есть flex-start, flex-end */
+    column-gap: 15px;
+    /* делает отступы между элементами */
+    flex-direction: column;
+    /* размещает элементы в столбик; column-reverse - элементы в столбик, но в обратном порядке и к другому краю; 
+    row - размещает в строку элементы; row-reverse - элементы в строку, но в обратно порядке и к другому краю */
+    flex-wrap: wrap;
+    /* даёт возможность автоматически переносить элементы, если они не входят */
+}
+
+.d1 {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+}
+
+.d2 {
+    /* flex: 1 1 auto; даёт возможность элементу расширяться или уменьшаться в зависимости от свободно места */
+    width: 150px;
+    height: 150px;
+    background-color: green;
+}
