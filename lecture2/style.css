@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.game-board {
+    position: relative; /* придаём полю относительное позиционирование */
+    display: grid; /* аналог flex */
+    grid-template-columns: repeat(4, 20vmin);
+    grid-template-rows: repeat(4, 20vmin);
+    gap: 2vmin;
+    border-radius: 8px;
+}
+
+.cell {
+    background: #444;
+    border-radius: 8px;
+}
+
+.tile {
+    --x: 0; /* css переменные */
+    --y: 0;
+
+    position: absolute;
+    top: calc(var(--y) * 22vmin); /* 20 высота + отступ 2 */
+    left: calc(var(--x) * 22vmin);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20vmin;
+    height: 20vmin;
+    font-size: 3rem; /* 32 px */
+    font-weight: bold;
+    border-radius: 8px;
+    background: hsl(25, 60%, var(--bgLightness)); /* отвечает за тон, насыщенность и яркость */
+    color: hsl(20, 25%, var(--textLightness));
+}
