@@ -1,0 +1,48 @@
+body {
+	background: #333333;
+	margin: 0;
+}
+
+.cards {
+	margin: 48px auto;
+	width: max-content;
+	display: grid;
+	grid-template-columns: repeat(4, 100px);
+	gap: 16px;
+	box-sizing: border-box;
+}
+
+.card {
+	height: 100px;
+	background: #111111;
+	border: 5px solid #444444;
+	cursor: pointer;
+	color: #AAAAAA;
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+	font-size: 40px;
+}
+
+button {
+	position: absolute;
+  	left: 50%;
+	font-size: 20px;
+	width: 210px;
+	height: 70px;
+	transform: translateX(-50%);
+	background: #111111;
+	border: 5px solid #444444;
+	color: #AAAAAA;
+	cursor: pointer;
+}
+
+.timer {
+	color: #AAAAAA;
+	font-size: 45px;
+	white-space: pre-line;
+	position: absolute;
+	top: 0;
+	right: 20px;
+	margin: 48px;
+  }
