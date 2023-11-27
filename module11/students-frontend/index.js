@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const month = dateObject.getMonth() + 1;
         const year = dateObject.getFullYear();
         const currentDate = maxDate.split('-');
-        const currentYear = Number(currentDate[0]);
-        const currentMonth = Number(currentDate[1]);
-        const currentDay = Number(currentDate[2]);
+        const currentYear = +currentDate[0];
+        const currentMonth = +currentDate[1];
+        const currentDay = +currentDate[2];
         let yearsOld;
 
         if (currentMonth > month || currentMonth === month && currentDay >= day) {
@@ -89,8 +89,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const yearStart = dateObject.getFullYear();
         const yearFinish = yearStart + 4;
         const currentDate = maxDate.split('-');
-        const currentYear = Number(currentDate[0]);
-        const currentMonth = Number(currentDate[1]);
+        const currentYear = +currentDate[0];
+        const currentMonth = +currentDate[1];
 
         if ((yearFinish < currentYear) || (currentYear === yearFinish && currentMonth > 9)) {
             return `${yearStart}-${yearFinish} (закончил обучение)`
@@ -106,16 +106,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     function deleteSpaces(input) {
         return input
             .split(/\s+/)
-            .filter(str => str.trim() !== '')
-            .map(str => str.trim());
+            .map(str => str.trim())
+            .filter(str => str !== '');
     }
 
     function createStudent(faculty, dataBirt, yearsStudy, nameArray, id = undefined) {
         const facultyArray = deleteSpaces(faculty);
-        
+
         if (!id) {
             id = new Date().getTime();
-        } 
+        }
 
         const student = {
             name: nameArray[1],
@@ -158,11 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const deleteCell = document.createElement('td');
         deleteCell.appendChild(deleteButton);
 
-        row.appendChild(name);
-        row.appendChild(faculty);
-        row.appendChild(dataBirth);
-        row.appendChild(yearsStudy);
-        row.appendChild(deleteCell);
+        row.append(name, faculty, dataBirth, yearsStudy, deleteCell);
 
         return row;
     }
@@ -192,11 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         buttonWrapper.classList.add('input-group-append', 'd-block');
 
         buttonWrapper.append(button);
-        form.append(nameInput);
-        form.append(facultyInput);
-        form.append(dataBirtInput);
-        form.append(yearsStudyInput);
-        form.append(buttonWrapper);
+        form.append(nameInput, facultyInput, dataBirtInput, yearsStudyInput, buttonWrapper);
 
         return {
             form,
@@ -242,11 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         clearButton.classList.add('btn', 'btn-primary');
         clearButton.textContent = 'Очистить фильтры';
 
-        form.append(fullnameSearch);
-        form.append(facultySearch);
-        form.append(yearBeginningStudy);
-        form.append(yearGraduation);
-        form.append(clearButton);
+        form.append(fullnameSearch, facultySearch, yearBeginningStudy, yearGraduation, clearButton);
 
         return {
             form,
@@ -256,6 +244,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             yearGraduation,
             clearButton,
         };
+    }
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        studentForm.button.disabled = true;
+
+        const nameArray = deleteSpaces(studentForm.nameInput.value);
+
+        if (nameArray.length !== 3) {
+            studentForm.button.disabled = false;
+            alert('ФИО должно состоять из 3 слов. Если у вас сложное имя, то объединяйте его знаком "-" (тире)')
+            return;
+        }
+
+        const studentObj = createStudent(
+            studentForm.facultyInput.value,
+            studentForm.dataBirtInput.value,
+            studentForm.yearsStudyInput.value,
+            nameArray
+        );
+
+        const response = await fetch('http://localhost:3000/students', {
+            method: 'POST',
+            body: JSON.stringify(studentObj),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(res => res.json());
+
+        const row = createTableRow(response, handler);
+
+        tableBody.append(row);
+        Object.values(other).forEach(input => input.value = '');
     }
 
 
@@ -315,38 +337,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     handleInputChange();
 
-    studentForm.form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        studentForm.button.disabled = true;
-
-        const nameArray = deleteSpaces(studentForm.nameInput.value);
-
-        if (nameArray.length !== 3) {
-            studentForm.button.disabled = false;
-            alert('ФИО должно состоять из 3 слов. Если у вас сложное имя, то объединяйте его знаком "-" (тире)')
-            return;
-        }
-
-        const studentObj = createStudent(
-            studentForm.facultyInput.value,
-            studentForm.dataBirtInput.value,
-            studentForm.yearsStudyInput.value,
-            nameArray
-        );
-
-        const response = await fetch('http://localhost:3000/students', {
-            method: 'POST',
-            body: JSON.stringify(studentObj),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const student = await response.json();
-
-        const row = createTableRow(student, handler);
-
-        tableBody.append(row);
-        Object.values(other).forEach(input => input.value = '');
-    })
+    studentForm.form.addEventListener('submit', handleSubmit)
 });
